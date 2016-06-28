@@ -10,36 +10,44 @@
     tools:context="com.example.ghostriley.gpstester.MainActivity">
 
     <EditText
+        android:id="@+id/locationText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Location"
-        android:id="@+id/locationText"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="110dp" />
+        android:layout_marginTop="110dp"
+        android:text="Location"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <Button
+        android:id="@+id/getLocationButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Get Location"
-        android:id="@+id/getLocationButton"
+        android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:text="Get Location" />
 
     <ProgressBar
+        android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/progressBar"
         android:layout_below="@+id/locationText"
         android:layout_centerHorizontal="true" />
 
     <Button
+        android:id="@+id/showOnMapButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Show on Map"
-        android:id="@+id/showOnMapButton"
         android:layout_below="@+id/getLocationButton"
         android:layout_centerHorizontal="true"
-        android:visibility="gone"/>
+        android:text="Show on Map" />
+
+    <Button
+        android:id="@+id/clearButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/showOnMapButton"
+        android:layout_alignStart="@+id/showOnMapButton"
+        android:layout_below="@+id/showOnMapButton"
+        android:text="Clear Memory" />
 </RelativeLayout>

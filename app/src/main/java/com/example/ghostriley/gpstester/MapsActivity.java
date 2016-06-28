@@ -1,7 +1,8 @@
 package com.example.ghostriley.gpstester;
 
-import android.support.v4.app.FragmentActivity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -10,12 +11,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     Double lati, longi;
+    String latt, longg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +29,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        if (savedInstanceState == null) {
+        /*if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             if (extras == null) {
                 Toast.makeText(MapsActivity.this, "Location values cannot be retrieved, exiting now", Toast.LENGTH_LONG).show();
@@ -57,15 +60,51 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        final SharedPreferences sharedPreferences = getSharedPreferences("Data", MODE_PRIVATE);
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        // Add a marker in Sydney and move the camera
-        LatLng latLng = new LatLng(lati, longi);
-        mMap.addMarker(new MarkerOptions().position(latLng).title("Your last saved location"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(latLng)      // Sets the center of the map to location user
-                .zoom(14)                   // Sets the zoom
-                .build();                   // Creates a CameraPosition from the builder
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        // Add a marker in detected location and move the camera
+        LatLng latLng;
+        for (int i = 1; i < 6; i++) {
+            latt = sharedPreferences.getString(Integer.toString(i) + "a", "");
+            longg = sharedPreferences.getString(Integer.toString(i) + "o", "");
+
+            if (latt != "" && longg != "") {
+                lati = Double.parseDouble(latt);
+                longi = Double.parseDouble(longg);
+                latLng = new LatLng(lati, longi); // lati, longi are latitude and longitude of last detected location
+                if (i == 5) {
+                    mMap.addMarker(new MarkerOptions().position(latLng).title("Last location"));
+                } else {
+                    mMap.addMarker(new MarkerOptions().position(latLng).title("Detected location"));
+                }
+
+
+                latLng = new LatLng(lati, longi);
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(latLng)      // Sets the center of the map to location user
+                        .zoom(15)                   // Sets the zoom
+                        .build();                   // Creates a CameraPosition from the builder
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker) {
+                        marker.showInfoWindow();
+                        return false;
+                    }
+                });
+            }
+        }
+
+        /*mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                //Toast.makeText(MapsActivity.this, "Clicked on marker", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });*/
+
     }
 }

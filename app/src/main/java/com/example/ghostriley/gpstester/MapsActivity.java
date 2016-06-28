@@ -18,7 +18,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     Double lati, longi;
-    String latt, longg;
+    String latt, longg, markerTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,23 +28,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-        /*if (savedInstanceState == null) {
-            Bundle extras = getIntent().getExtras();
-            if (extras == null) {
-                Toast.makeText(MapsActivity.this, "Location values cannot be retrieved, exiting now", Toast.LENGTH_LONG).show();
-                finish();
-            } else {
-                lati = Double.parseDouble(extras.getString("Latitude"));
-                longi = Double.parseDouble(extras.getString("Longitude"));
-            }
-        } else {
-            String latt = (String) savedInstanceState.getSerializable("Latitude");
-            String longg = (String) savedInstanceState.getSerializable("Longitude");
-            lati = Double.parseDouble(latt);
-            longi = Double.parseDouble(longg);
-        } //information retrieved*/
-
     }
 
 
@@ -61,7 +44,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         final SharedPreferences sharedPreferences = getSharedPreferences("Data", MODE_PRIVATE);
-        final SharedPreferences.Editor editor = sharedPreferences.edit();
 
         // Add a marker in detected location and move the camera
         LatLng latLng;
@@ -74,11 +56,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 longi = Double.parseDouble(longg);
                 latLng = new LatLng(lati, longi); // lati, longi are latitude and longitude of last detected location
                 if (i == 5) {
-                    mMap.addMarker(new MarkerOptions().position(latLng).title("Last location"));
+                    markerTitle = "Latest Location, time: " + sharedPreferences.getString(Integer.toString(i) + "t", "");
+                    mMap.addMarker(new MarkerOptions().position(latLng).title(markerTitle));
                 } else {
-                    mMap.addMarker(new MarkerOptions().position(latLng).title("Detected location"));
+                    markerTitle = "Parked at: " + sharedPreferences.getString(Integer.toString(i) + "t", "");
+                    mMap.addMarker(new MarkerOptions().position(latLng).title(markerTitle));
                 }
-
 
                 latLng = new LatLng(lati, longi);
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
@@ -92,19 +75,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     @Override
                     public boolean onMarkerClick(Marker marker) {
                         marker.showInfoWindow();
-                        return false;
+                        Toast.makeText(MapsActivity.this, marker.getPosition().toString(), Toast.LENGTH_SHORT).show();
+                        return true;
                     }
                 });
             }
         }
-
-        /*mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                //Toast.makeText(MapsActivity.this, "Clicked on marker", Toast.LENGTH_SHORT).show();
-                return true;
-            }
-        });*/
-
     }
 }

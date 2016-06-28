@@ -33,7 +33,7 @@ public class MainActivity extends Activity implements OnClickListener, android.c
     public String lati;
     public String longi;
     public static int count = 0;
-    int flag = 0;
+    public String savedTime;
 
     /**
      * Called when the activity is first created.
@@ -127,17 +127,20 @@ public class MainActivity extends Activity implements OnClickListener, android.c
                 String time = "Time: " + location.getTime();
 
                 editTextShowLocation.setText(londitude + "\n" + latitude + "\n" + altitiude + "\n" + accuracy + "\n" + time);
-                flag = 1;
                 progress.setVisibility(View.GONE);
+                savedTime=Integer.toString(new java.sql.Time(System.currentTimeMillis()).getHours())+":"+
+                        Integer.toString(new java.sql.Time(System.currentTimeMillis()).getMinutes());
                 final SharedPreferences sharedPreferences2 = getSharedPreferences("Data", MODE_PRIVATE);
                 final SharedPreferences.Editor editor = sharedPreferences2.edit();
                 for (int i = 1; i < 5; i++) {
-                    // a: LaTITUDE; o: LoNGITUDE
+                    // a: lAtitude; o: lOngitude; t:Time
                     editor.putString(Integer.toString(i)+"a", sharedPreferences2.getString(Integer.toString(i + 1)+"a", ""));
                     editor.putString(Integer.toString(i)+"o", sharedPreferences2.getString(Integer.toString(i + 1)+"o", ""));
+                    editor.putString(Integer.toString(i)+"t", sharedPreferences2.getString(Integer.toString(i + 1)+"t", ""));
                 }
                 editor.putString("5" + "a", lati);
                 editor.putString("5" + "o", longi);
+                editor.putString("5" + "t", savedTime);
                 editor.commit();
             }
         }
